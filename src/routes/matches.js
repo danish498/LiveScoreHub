@@ -61,8 +61,8 @@ matcherRoute.post("/", async (req, res) => {
       })
       .returning();
 
-    if (res.app.locals.broadMatchCreate) {
-      res.app.locals.broadMatchCreate(event);
+    if (res.app.locals.broadcastMatchCreated) {
+      res.app.locals.broadcastMatchCreated(event);
     }
 
     res.status(201).json(event);

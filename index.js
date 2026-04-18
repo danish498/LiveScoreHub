@@ -1,11 +1,14 @@
 import express from "express";
+import cors from "cors";
 import { matcherRoute } from "./src/routes/matches.js";
 import { attachWebSocketServer } from "./src/ws/server.js";
 import http from "http";
+import { commentaryRoute } from "./src/routes/commentary.js";
 
 const PORT = Number(process.env.PORT) || 9090;
 const HOST = process.env.HOST || "localhost";
 const app = express();
+app.use(cors());
 
 const server = http.createServer(app);
 
@@ -16,10 +19,12 @@ app.get("/", (req, res) => {
 });
 
 app.use("/matches", matcherRoute);
+app.use("/matches/:id/commentary", commentaryRoute);
+const { broadcastMatchCreated, broadcastCommentary } =
+  attachWebSocketServer(server);
 
-const { broadMatchCreate } = attachWebSocketServer(server);
-
-app.locals.broadMatchCreate = broadMatchCreate;
+app.locals.broadcastMatchCreated = broadcastMatchCreated;
+app.locals.broadcastCommentary = broadcastCommentary;
 
 server.listen(PORT, HOST, () => {
   const baseUrl =
